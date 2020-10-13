@@ -8,27 +8,27 @@ import session from 'express-session';
 import passport from 'passport';
 import dotenv from 'dotenv'; 
 import db from './db';
-
+import routes from './routes';
+import passportConfig from './services/config/passport'
 dotenv.config();
+
 const app = express();
 app.use(helmet());
+app.use('./static', express.static(__dirname + '/public'));
 app.use(logger("tiny"));
 app.use(cookieParser());
-app.use(bodyParser.json());
-app.use(bodyParser.text());
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(session({
-    secret: SECRET_CODE,
-    cookie: {maxAge: 60 * 60 *1000},
-    resave: true,
-    saveUninitialized: false
-}));
-
+app.use(express.json());
+app.use(express.urlencoded({extended: false}));
+app.use(passport.initialize());
+passportConfig();
 db().connect;
 
 app.get('/', (req,res) => {
     res.send('Hello Exprsess')
 });
+
+// domain/api/...
+app.use('/api',routes)
 
 app.listen(process.env.PORT, ()=>{
     console.log(`⛳ Express Server Listening at http://localhost:${process.env.PORT}`)
