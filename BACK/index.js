@@ -14,10 +14,9 @@ dotenv.config();
 
 const app = express();
 app.use(helmet());
-app.use('./static', express.static(__dirname + '/public'));
 app.use(logger("tiny"));
 app.use(cookieParser());
-app.use(express.json());
+app.use(bodyParser.json());
 app.use(express.urlencoded({extended: false}));
 app.use(passport.initialize());
 passportConfig();
@@ -26,9 +25,11 @@ db().connect;
 app.get('/', (req,res) => {
     res.send('Hello Exprsess')
 });
+app.use('./static', express.static(__dirname + '/public'));
 
 // domain/api/...
-app.use('/api',routes)
+/* /... */
+app.use('/api', routes);
 
 app.listen(process.env.PORT, ()=>{
     console.log(`⛳ Express Server Listening at http://localhost:${process.env.PORT}`)

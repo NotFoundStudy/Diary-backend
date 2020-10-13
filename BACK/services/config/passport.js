@@ -4,7 +4,7 @@ const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
 const LocalStrategy = require('passport-local').Strategy;
 // 1. 모델 수정하기
-// let UserModel = require('../models').User;
+// let UserModel = require('../db/models/users').User;
 
 require('dotenv').config();
 

@@ -1,28 +1,73 @@
 import mongoose from 'mongoose';
+import crypto from 'crypto';
+import token from '../../lib/token';
+const { PASSWORD_HASH_KEY: secret } = process.env;
+
+// 사용법: console.log(hash('1234'));
+const hash = (password) => crypto.createHmac('sha256', secret).update(password).digest('hex');
 
 const { Schema } = mongoose;
 
-let userSchema = new Schema({
-    email: {type: String, unique: true},
-    studentId: {type: String},
-	name: {type: String},
-	password: { type: String },
-    roles: [String],
-    confirmation_code: String,
-    confirmed: { type: Boolean, default: false },
-	facebook: {
-        id: String,
-        token: String,
-        email: String,
-        name: String
-    },
-    google: {
-        id: String,
-        token: String,
-        email: String,
-        name: String
-    }
-	
-}, {timestamps: true});
+let userSchema = new Schema(
+	{
+		email: { type: String, unique: true },
+		studentId: { type: String },
+		name: { type: String },
+		password: { type: String },
+		roles: [String],
+		confirmation_code: String,
+		confirmed: { type: Boolean, default: false },
+		facebook: {
+			id: String,
+			token: String,
+			email: String,
+			name: String,
+		},
+		google: {
+			id: String,
+			token: String,
+			email: String,
+			name: String,
+		},
+	},
+	{ timestamps: true }
+);
 
-module.exports = mongoose.model('User',userSchema);
+// 이메일 찾기
+userSchema.statics.findByEmail = function (email) {
+	return this.findOne({ email });
+};
+
+// 닉네임 찾기
+userSchema.statics.findByStudentId = function (studentId) {
+	return this.findOne({ displayName });
+};
+
+// 이메일과 닉네임 찾기
+userSchema.statics.findExistancy = function ({ email, studentId }) {
+	return this.findOne({
+		$or: [{ email }, { studentId }],
+	});
+};
+
+// local 회원가입
+userSchema.statics.localRegister = function ({ email, password, studentId, name }) {
+	const user = new this({
+		email,
+		password: hash(password),
+		studentId,
+		name,
+		confirmation_code: Math.random().toString(36).substr(2, 11),
+	});
+
+	user.save();
+	return user;
+};
+
+// 해당 유저의 비밀번호 일치여부 체크
+userSchema.methods.validatePassword = function(password) {
+  const hashed = hash(password);
+  return this.password === hashed;
+};
+
+module.exports = mongoose.model('User', userSchema);
