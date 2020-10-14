@@ -1,5 +1,5 @@
 import { userSchema as userValidation } from '../validation/schema';
-import { userSchema } from '../../db/model/users'; 
+import User  from '../../db/model/users'; 
 export async function register({ data }) {
 	const response = {
 		status: 300,
@@ -11,8 +11,8 @@ export async function register({ data }) {
 	// validation check
 	try {
 		const value = await userValidation.validateAsync(data);
-		const { email, studentId } = data;
-		const exists = await userSchema.findExistancy({ email, studentId });
+		const { email, studentId, password, name } = data;
+		const exists = await User.findExistancy({ email, studentId });
 
 		if (exists) {
 			response.error = true
@@ -21,7 +21,7 @@ export async function register({ data }) {
 			response.message = `Already exists [${key}]`;
 			return response;
 		}
-		const user = await userSchema.localRegister({
+		const user = await User.localRegister({
 		  email, password, studentId, name
 		});
 		response.data = user
@@ -29,6 +29,7 @@ export async function register({ data }) {
 		response.error = true;
 		response.status= 409;
 		response.message = err 
+		console.log("ERROR [AUTH]:::", err)
 	}
 	return response;
 }
