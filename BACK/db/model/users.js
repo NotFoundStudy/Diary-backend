@@ -50,6 +50,13 @@ User.statics.findExistancy = function ({ email, studentId }) {
 	});
 };
 
+User.statics.login = async function({ email, password }) {
+	const userData = await this.findOne({ email })
+	const isAuthenticated = userData.validatePassword(password)
+	if(isAuthenticated) return userData
+	return false
+}
+
 // local 회원가입
 User.statics.localRegister = function ({ email, password, studentId, name }) {
 	const user = new this({
@@ -65,9 +72,11 @@ User.statics.localRegister = function ({ email, password, studentId, name }) {
 };
 
 // 해당 유저의 비밀번호 일치여부 체크
-User.methods.validatePassword = function(password) {
-  const hashed = hash(password);
-  return this.password === hashed;
+User.methods.validatePassword = function (password) {
+	console.log(">>>>>", password)
+	const hashed = hash(password);
+	console.log(">>>>>",hashed)
+	return this.password === hashed;
 };
 
 export default mongoose.model('User', User);

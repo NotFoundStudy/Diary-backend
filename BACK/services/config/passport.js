@@ -1,10 +1,12 @@
-const passport = require('passport');
-const passportJWT = require('passport-jwt');
+import passport from 'passport';
+import passportJWT from 'passport-jwt';
+// let UserModel = require('../db/models/users').User;
+import User from '../../db/model/users';
+import { Strategy as LocalStrategy } from 'passport-local';
+// const LocalStrategy = require('passport-local').Strategy;
+
 const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
-const LocalStrategy = require('passport-local').Strategy;
-// 1. 모델 수정하기
-// let UserModel = require('../db/models/users').User;
 
 require('dotenv').config();
 
@@ -17,15 +19,20 @@ module.exports = () => {
 				usernameField: 'email',
 				passwordField: 'password',
 			},
-			function (email, password, done) {
+			function (username, password, done) {
 				// 이 부분에선 저장되어 있는 User를 비교하면 된다.
 				// password 를 해독하는 작업 필요
-				return UserModel.findOne({ where: { email: email, password: password } })
-					.then((user) => {
-						if (!user) {
-							return done(null, false, { message: 'Incorrect email or password.' });
+				console.log("password >>>>",password)
+				User.login({email:username, password})
+					.then((UserData) => {
+					console.log(">>>>UserData",UserData)
+						if (!UserData) {
+							return done(null, false, {
+								message: 'Incorrect email or password.',
+							});
 						}
-						return done(null, user, { message: 'Logged In Successfully' });
+						const { email, password, studentId, name } = UserData
+						return done(null, { email, password, studentId, name });
 					})
 					.catch((err) => done(err));
 			}
