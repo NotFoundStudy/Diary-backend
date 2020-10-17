@@ -47,7 +47,8 @@ module.exports = () => {
 				secretOrKey: process.env.JWT_SECRET,
 			},
 			function (jwtPayload, done) {
-				return UserModel.findOneById(jwtPayload.id)
+				console.log('jwt')
+				User.findOneById(jwtPayload.id)
 					.then((user) => {
 						return done(null, user);
 					})

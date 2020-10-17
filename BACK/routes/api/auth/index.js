@@ -6,19 +6,20 @@ const router = express.Router();
 
 // api/auth/
 
-router.post(
-	'/login',
-	passport.authenticate('local', {
-		successRedirect: '/',
-		failureRedirect: '/login',
-		successMessage: true,
-		failureMessage: {
-			err_code: 1,
-			message: 'Login fail',
-		},
-		session: false,
-	})
-);
+// router.post(
+// 	'/login',
+// 	passport.authenticate('local', {
+// 		successRedirect: '/',
+// 		failureRedirect: '/login',
+// 		successMessage: true,
+// 		failureMessage: {
+// 			err_code: 1,
+// 			message: 'Login fail',
+// 		},
+// 		session: false,
+// 	})
+// );
+router.post('/login',AuthTokenController.create);
 
 router.post('/register', register);
 
