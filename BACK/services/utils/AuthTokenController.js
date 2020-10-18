@@ -2,7 +2,6 @@ require('dotenv').config();
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import winston from '@config/winston';
-import localStorage from 'local-storage';
 
 exports.create = function (req, res) {
 	passport.authenticate('local', { session: false }, (err, user) => {
@@ -26,9 +25,13 @@ exports.create = function (req, res) {
 				res.send(err);
 			}
 			// jwt.sign('token내용', 'JWT secretkey')
+			const { email, name, confirmation, roles, studentId } = user;
 			const token = jwt.sign(user.toJSON(), process.env.JWT_SECRET);
-			localStorage('access-token', token); 
-			return res.json({ data: user, token, message: 'login success' });
+			return res.json({
+				data: { email, name, confirmation, roles, studentId },
+				token,
+				message: 'login success',
+			});
 		});
 	})(req, res);
 };

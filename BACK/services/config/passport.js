@@ -48,7 +48,6 @@ module.exports = () => {
 				secretOrKey: process.env.JWT_SECRET,
 			},
 			function (jwtPayload, done) {
-				console.log('jwt', jwtPayload);
 				User.findByEmail(jwtPayload.email)
 					.then((user) => {
 						return done(null, user);
