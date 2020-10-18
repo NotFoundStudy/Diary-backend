@@ -1,3 +1,18 @@
 {
-	"presets" : ["@babel/preset-env"]
+	"presets" : ["@babel/preset-env"],
+	"plugins": [
+    [
+      "module-resolver",
+      {
+	   "root": ["./"],
+        "alias": {
+			"@db": "./db",
+			"@services": "./services",
+			"@routes": "./routes",
+			"@controllers": "./controllers",
+			"@logs": "./logs"
+        }
+      }
+    ]
+  ]
 }
