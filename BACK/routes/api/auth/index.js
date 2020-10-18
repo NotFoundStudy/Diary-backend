@@ -1,7 +1,7 @@
 import express from 'express';
 import passport from 'passport';
-import AuthTokenController from '../../../services/utils/AuthTokenController';
-import { register } from '../../../controllers/auth';
+import AuthTokenController from '@services/utils/AuthTokenController';
+import { register } from '@controllers/auth';
 const router = express.Router();
 
 // api/auth/

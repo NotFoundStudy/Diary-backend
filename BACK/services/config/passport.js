@@ -1,9 +1,7 @@
 import passport from 'passport';
 import passportJWT from 'passport-jwt';
-// let UserModel = require('../db/models/users').User;
-import User from '../../db/model/users';
+import User from '@db/model/users';
 import { Strategy as LocalStrategy } from 'passport-local';
-// const LocalStrategy = require('passport-local').Strategy;
 
 const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
@@ -22,17 +20,18 @@ module.exports = () => {
 			function (username, password, done) {
 				// 이 부분에선 저장되어 있는 User를 비교하면 된다.
 				// password 를 해독하는 작업 필요
+				console.log("username >>>>",username)
 				console.log("password >>>>",password)
 				User.login({email:username, password})
-					.then((UserData) => {
-					console.log(">>>>UserData",UserData)
-						if (!UserData) {
+					.then( user => {
+					console.log(">>>>UserData",user)
+						if (!user) {
 							return done(null, false, {
 								message: 'Incorrect email or password.',
 							});
 						}
-						const { email, password, studentId, name } = UserData
-						return done(null, { email, password, studentId, name });
+						const { email, password, studentId, name } = user
+						return done(null, user);
 					})
 					.catch((err) => done(err));
 			}

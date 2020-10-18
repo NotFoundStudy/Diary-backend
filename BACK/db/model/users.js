@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import crypto from 'crypto';
-import token from '../../lib/token';
+import token from '@lib/token';
 const { PASSWORD_HASH_KEY: secret } = process.env;
 
 // 사용법: console.log(hash('1234'));
@@ -73,9 +73,9 @@ User.statics.localRegister = function ({ email, password, studentId, name }) {
 
 // 해당 유저의 비밀번호 일치여부 체크
 User.methods.validatePassword = function (password) {
-	console.log(">>>>>", password)
+	console.log(">>>>>dbPassword", password)
 	const hashed = hash(password);
-	console.log(">>>>>",hashed)
+	console.log(">>>>>HashedPassword",hashed)
 	return this.password === hashed;
 };
 

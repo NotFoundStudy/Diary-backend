@@ -1,6 +1,6 @@
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
-require('dotenv').config();
 const localStorage = require('local-storage')
 
 exports.create = function (req, res) {
