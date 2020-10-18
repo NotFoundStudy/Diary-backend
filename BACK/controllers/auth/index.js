@@ -1,5 +1,6 @@
 import { register as registerService } from '@services/auth';
 import { sendConfirmationCode } from '@services/utils/Mailer';
+import User from '@db/model/users';
 import jwt from 'jsonwebtoken';
 import winston from '@config/winston';
 require('dotenv').config();
@@ -46,4 +47,8 @@ export function sendConfirmationCodeMail(req, res) {
 			});
 		});
 	//
+}
+
+export function updateProfile(req,res,user) {
+	User.updateProfile(user);	
 }
