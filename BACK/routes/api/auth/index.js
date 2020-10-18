@@ -1,6 +1,7 @@
 import express from 'express';
 import passport from 'passport';
 import AuthTokenController from '@services/utils/AuthTokenController';
+import Auth from '@controllers/auth';
 import { register, sendConfirmationCodeMail } from '@controllers/auth';
 
 const router = express.Router();
@@ -17,7 +18,7 @@ router.post('/login',AuthTokenController.create);
 
 router.post('/register', register);
 
-router.put('/user', passport.authenticate('jwt', {session: false}), (req, res) => {res.send("SUCCESS!!")});
+router.put('/user', passport.authenticate('jwt', {session: false}), (req, res, user) => { Auth.updateProfile(user); res.send("SUCCESS!!") });
 
 router.delete('/user', () => {});
 
