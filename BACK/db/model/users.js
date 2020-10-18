@@ -51,7 +51,14 @@ User.statics.findExistancy = function ({ email, studentId }) {
 };
 
 User.statics.login = async function({ email, password }) {
-	const userData = await this.findOne({ email })
+	const userData = await this.findOne({ "$or": [{ email }, { studentId: email }] })
+	const isAuthenticated = userData.validatePassword(password)
+	if(isAuthenticated) return userData
+	return false
+}
+
+User.statics.loginById = async function({ email, password }) {
+	const userData = await this.findOne({ studentId: email })
 	const isAuthenticated = userData.validatePassword(password)
 	if(isAuthenticated) return userData
 	return false
