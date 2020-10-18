@@ -73,9 +73,7 @@ User.statics.localRegister = function ({ email, password, studentId, name }) {
 
 // 해당 유저의 비밀번호 일치여부 체크
 User.methods.validatePassword = function (password) {
-	console.log(">>>>>dbPassword", password)
 	const hashed = hash(password);
-	console.log(">>>>>HashedPassword",hashed)
 	return this.password === hashed;
 };
 

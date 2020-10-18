@@ -1,28 +1,34 @@
 require('dotenv').config();
-const jwt = require('jsonwebtoken');
-const passport = require('passport');
-const localStorage = require('local-storage')
+import jwt from 'jsonwebtoken';
+import passport from 'passport';
+import winston from '@config/winston';
+import localStorage from 'local-storage';
 
 exports.create = function (req, res) {
-	passport.authenticate('local', {session: false}, (err, user) => {
-		console.log(">>>>user<<<<",user)
-		if (err || !user) {
-			return res.status(400).json({
-				message: 'Login Fail',
-				user   : user
+	passport.authenticate('local', { session: false }, (err, user) => {
+		if (err) {
+			return res.status(500).json({
+				message: 'Server Error',
+				error: '0002',
+				data: false,
 			});
 		}
-		req.login(user, {session: false}, err =>{
-			if(err) {
-				res.send(err)
+		if (!user) {
+			return res.status(400).json({
+				message: 'User not found!',
+				error: '1001',
+				data: false,
+			});
+		}
+		req.login(user, { session: false }, (err) => {
+			if (err) {
+				winston.error(err);
+				res.send(err);
 			}
-			console.log("!!!!!!!!!!!!!!!!login success !!!!!!!!!!!!!!!!!!!")
 			// jwt.sign('token내용', 'JWT secretkey')
 			const token = jwt.sign(user.toJSON(), process.env.JWT_SECRET);
-			localStorage('token', token);
-			console.log(">>>>token<<<<",localStorage('token'))
-			return res.json({user, token, message: 'login success'});
-		})
-	
-	})(req,res)
-}
+			localStorage('access-token', token); 
+			return res.json({ data: user, token, message: 'login success' });
+		});
+	})(req, res);
+};

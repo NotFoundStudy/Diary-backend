@@ -6,24 +6,17 @@ const router = express.Router();
 
 // api/auth/
 
-// router.post(
-// 	'/login',
-// 	passport.authenticate('local', {
-// 		successRedirect: '/',
-// 		failureRedirect: '/login',
-// 		successMessage: true,
-// 		failureMessage: {
-// 			err_code: 1,
-// 			message: 'Login fail',
-// 		},
-// 		session: false,
-// 	})
-// );
+
+// 인증절차가 필요한 라우팅은 아래소스를 참고
+/*
+ *   router.put('/user', passport.authenticate('jwt', {session: false}), (req, res) => {res.send("SUCCESS!!")});
+ */
+
 router.post('/login',AuthTokenController.create);
 
 router.post('/register', register);
 
-router.put('/user', () => {});
+router.put('/user', passport.authenticate('jwt', {session: false}), (req, res) => {res.send("SUCCESS!!")});
 
 router.delete('/user', () => {});
 

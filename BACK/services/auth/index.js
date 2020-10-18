@@ -1,5 +1,5 @@
 import { userSchema as userValidation } from '../validation/schema';
-import User from '../../db/model/users';
+import User from '@db/model/users';
 
 export async function register({ data }) {
 	const response = {

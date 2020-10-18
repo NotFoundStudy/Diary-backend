@@ -10,6 +10,5 @@ export const userSchema = Joi.object({
 	password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
 	repeat_password: Joi.ref('password'),
 	access_token: [Joi.string(), Joi.number()],
-})
-	.xor('password', 'access_token')
-	// .with('password', 'repeat_password');
+}).xor('password', 'access_token');
+// .with('password', 'repeat_password');

@@ -2,6 +2,8 @@ import passport from 'passport';
 import passportJWT from 'passport-jwt';
 import User from '@db/model/users';
 import { Strategy as LocalStrategy } from 'passport-local';
+import winston from '@config/winston';
+import { loginSchema as loginValidation } from '../validation/schema';
 
 const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
@@ -17,23 +19,23 @@ module.exports = () => {
 				usernameField: 'email',
 				passwordField: 'password',
 			},
-			function (username, password, done) {
-				// 이 부분에선 저장되어 있는 User를 비교하면 된다.
-				// password 를 해독하는 작업 필요
-				console.log("username >>>>",username)
-				console.log("password >>>>",password)
-				User.login({email:username, password})
-					.then( user => {
-					console.log(">>>>UserData",user)
+			async function (username, password, done) {
+				User.login({ email: username, password })
+					.then((user) => {
 						if (!user) {
+							winston.warn('err[1001] User not founded!!');
 							return done(null, false, {
-								message: 'Incorrect email or password.',
+								error: '1001',
+								message: 'User not founded!!',
+								data: null,
 							});
 						}
-						const { email, password, studentId, name } = user
 						return done(null, user);
 					})
-					.catch((err) => done(err));
+					.catch((err) => {
+						winston.error('err[0002] DATABASE request error,',err.message);
+						return done(err);
+					});
 			}
 		)
 	);
@@ -46,12 +48,13 @@ module.exports = () => {
 				secretOrKey: process.env.JWT_SECRET,
 			},
 			function (jwtPayload, done) {
-				console.log('jwt')
-				User.findOneById(jwtPayload.id)
+				console.log('jwt', jwtPayload);
+				User.findByEmail(jwtPayload.email)
 					.then((user) => {
 						return done(null, user);
 					})
 					.catch((err) => {
+						winston.error('err[0002] DATABASE request error,',err.message);
 						return done(err);
 					});
 			}

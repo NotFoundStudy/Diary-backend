@@ -1,4 +1,5 @@
 import { register as registerService } from '@services/auth';
+import winston from '@config/winston';
 
 export function register(req, res) {
 	const { body } = req;
@@ -10,6 +11,6 @@ export function register(req, res) {
 		}
 		res.send(response.data)
 	}).catch(err => {
-		console.log(">>>>> error::: register")
+		winston.error(`Register Failed... ::: ${err.message}`)
 	})
 }
