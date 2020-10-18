@@ -10,6 +10,7 @@ import dotenv from 'dotenv';
 import db from './db';
 import routes from './routes';
 import passportConfig from './services/config/passport'
+import winston from './config/winston'
 dotenv.config();
 
 const app = express();
@@ -32,7 +33,7 @@ app.use('./static', express.static(__dirname + '/public'));
 app.use('/api', routes);
 
 app.listen(process.env.PORT, ()=>{
-    console.log(`⛳ Express Server Listening at http://localhost:${process.env.PORT}`)
+	 winston.info(`⛳ Express Server Listening at http://localhost:${process.env.PORT}`)
 });
 
 
