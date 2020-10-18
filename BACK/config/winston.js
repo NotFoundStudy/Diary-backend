@@ -4,7 +4,16 @@ import process from 'process';
 const { combine, timestamp, label, printf } = winston.format;
 
 const myFormat = printf(({ level, message, label, timestamp }) => {
-	return `${timestamp} [${label}] ${level}: ${message}`; // log 출력 포맷 정의
+	const options = {
+		year: 'numeric',
+		month: 'short',
+		day: 'numeric',
+		weekday: 'long',
+		hour: '2-digit',
+		minute: '2-digit',
+	};
+	const date = new Date(timestamp).toLocaleDateString(undefined, options);
+	return `${date} [${label}] ${level}: ${message}`; // log 출력 포맷 정의
 });
 
 const options = {
@@ -48,7 +57,7 @@ let logger = new winston.createLogger({
 });
 
 if (process.env.NODE_ENV !== 'production') {
-	console.log('%c\n\n======== DEVELOPMENT MODE ========\n\n','background: #222; color: #bada55');
+	console.log('%c\n\n======== DEVELOPMENT MODE ========\n\n', 'background: #222; color: #bada55');
 	logger.add(new winston.transports.Console(options.console)); // 개발 시 console로도 출력
 }
 
