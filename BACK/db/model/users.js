@@ -51,7 +51,7 @@ User.statics.findExistancy = function ({ email, studentId }) {
 };
 
 User.statics.login = async function({ email, password }) {
-	const userData = await this.findOne({ "$or": [{ email }, { studentId: email }] })findByStudentId
+	const userData = await this.findOne({ "$or": [{ email }, { studentId: email }] })
 	const isAuthenticated = userData.validatePassword(password)
 	if(isAuthenticated) return userData
 	return false
@@ -75,6 +75,20 @@ User.statics.localRegister = function ({ email, password, studentId, name }) {
 User.methods.validatePassword = function (password) {
 	const hashed = hash(password);
 	return this.password === hashed;
+};
+
+//프로필 수정
+User.statics.updatProfile = function (user) {
+	const { name, password } = user;
+	if ( name && password ) {
+		user.update({ name: name }, { password: password });
+	}
+	else if ( name ) {
+		user.update({ name: name });
+	}
+	else {
+		user.update({ password: password });
+	}
 };
 
 export default mongoose.model('User', User);
