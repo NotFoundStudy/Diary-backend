@@ -6,11 +6,12 @@
       {
 	   "root": ["./"],
         "alias": {
-			"@db": "./db",
-			"@services": "./services",
-			"@routes": "./routes",
-			"@controllers": "./controllers",
-			"@logs": "./logs"
+					"@db": "./db",
+					"@services": "./services",
+					"@routes": "./routes",
+					"@controllers": "./controllers",
+					"@logs": "./logs",
+					"@lib": "./lib"
         }
       }
     ]
