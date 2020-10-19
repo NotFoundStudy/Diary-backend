@@ -67,21 +67,43 @@ export function updateProfile(req,res) {
 		}
 
 }
-export function checkDuplicate (req, res) {
-	const { studentId, email } = req.body;
+export function checkEmail (req, res) {
+	const { email } = req.body;
 	
-		User.checkDuplicate({ studentId, email })
+	User.checkEmail({ email })
 		.then((duplicate) => {
-			if (duplicate === "studentId") {
-				res.json ({
-					data: null,
-					message: "studentId is duplicated"
-				})
-			}
-			else if(duplicate === 'email') {
+			if (duplicate) {
 				res.json ({
 					data: null,
 					message: "email is duplicated"
+				})
+			} 
+			else {
+				res.json ({
+					data: null,
+					message: "not duplicated"
+				})
+			}
+		})
+		.catch((err)=> {
+			res.json ({
+				data: null,
+				error : '1004',
+				message: 'email checking error'
+			})	
+	})
+}
+
+
+export function checkStudentId (req, res) {
+	const { studentId } = req.body;
+	
+	User.checkStudentId({ studentId })
+		.then((duplicate) => {
+			if (duplicate) {
+				res.json ({
+					data: null,
+					message: "studentId is duplicated"
 				})
 			}
 			else {
@@ -91,14 +113,11 @@ export function checkDuplicate (req, res) {
 				})
 			}
 		})
-	.catch((err)=> {
-		res.json ({
-			data: null,
-			error : '1004',
-			message: 'dulicate checking error'
-		})	
-	})
-	
-
-	
+		.catch((err)=> {
+			res.json ({
+				data: null,
+				error : '1005',
+				message: 'studentId checking error'
+			})	
+		})
 }
