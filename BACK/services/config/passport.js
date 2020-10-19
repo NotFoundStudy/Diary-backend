@@ -16,10 +16,12 @@ module.exports = () => {
 	passport.use(
 		new LocalStrategy(
 			{
-				usernameField: 'email',
+				/* FE에서 input tag의  name = userId 사용해야 함 */
+				usernameField: 'userId',
 				passwordField: 'password',
 			},
 			async function (username, password, done) {
+				console.log(username,'>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
 				User.login({ email: username, password })
 					.then((user) => {
 						if (!user) {

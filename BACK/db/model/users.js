@@ -78,17 +78,21 @@ User.methods.validatePassword = function (password) {
 };
 
 //프로필 수정
-User.statics.updatProfile = function (user) {
-	const { name, password } = user;
-	if ( name && password ) {
-		user.update({ name: name }, { password: password });
+User.statics.updateProfile = function (user, body) {
+	const {name, password} = body;
+	if ( name != undefined && password != undefined ) {
+		user.name = name;
+		user.password = password;
 	}
-	else if ( name ) {
-		user.update({ name: name });
+	else if ( name != undefined ) {
+		user.name = name;
 	}
 	else {
-		user.update({ password: password });
+		user.password = password;
 	}
+	user.save()
+	return user;
+
 };
 
 export default mongoose.model('User', User);

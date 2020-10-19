@@ -49,6 +49,21 @@ export function sendConfirmationCodeMail(req, res) {
 	//
 }
 
-export function updateProfile(req,res,user) {
-	User.updateProfile(user);	
+export function updateProfile(req,res) {
+	const { body, user } = req;
+		try {
+			let updatedData = User.updateProfile(user, body)
+			res.json ({
+				data: updatedData,
+				message: 'update complete',
+			})
+		}
+		catch(err) {
+				res.json ({
+					data: null,
+					error: '1003',
+					message: 'update fail',
+				});
+		}
+
 }
