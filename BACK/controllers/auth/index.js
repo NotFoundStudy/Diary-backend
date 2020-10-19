@@ -59,11 +59,11 @@ export function updateProfile(req,res) {
 			})
 		}
 		catch(err) {
-				res.json ({
-					data: null,
-					error: '1003',
-					message: 'update fail',
-				});
+			res.json ({
+				data: null,
+				error: '1003',
+				message: 'update fail',
+			});
 		}
 
 }
