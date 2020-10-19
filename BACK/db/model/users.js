@@ -95,4 +95,31 @@ User.statics.updateProfile = function (user, body) {
 
 };
 
+User.statics.checkDuplicate = async function ({ studentId, email }) {
+	let duplicate= null;
+	if (studentId != undefined) {
+		await this.findOne({studentId: studentId})
+		.then((result)=> {
+			if (result.length != 0) {
+				duplicate = "studentId"
+			}
+		}).catch((err)=>{
+			duplicate = "false"
+		})
+	}
+	else if (email != undefined) {
+		await this.findOne({email: email})
+		.then((result)=> {
+			if (result.length != 0) {
+				duplicate = "email"
+			}
+		}).catch((err)=>{
+			duplicate = "false"
+		})
+	}
+	
+	return duplicate;
+}
+
+
 export default mongoose.model('User', User);
