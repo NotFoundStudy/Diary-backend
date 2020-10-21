@@ -62,3 +62,25 @@ export async function confirmationSave({ email, confirmation_code }) {
 	}
 	return response; 
 }
+
+export async function updateRoles({ email, roles}) {
+	let response = {
+		status: 300,
+		error: '',
+		message: '',
+		data: {},
+	};
+	try {
+		const userData = await User.findByEmail(email);
+		const result = userData.updateField('roles', roles )
+		response.data = result;
+		response.message = "Roles update complete";
+	} catch(err) {
+		response.error="0002";
+		response.status = 409;
+		response.message = 'database request error';
+		winston.error(`Roles update Failed... ::: ${err.message}`);
+		
+	}
+	return response; 
+}
