@@ -2,7 +2,7 @@ import express from 'express';
 import passport from 'passport';
 import AuthTokenController from '@services/utils/AuthTokenController';
 import winston from '@config/winston';
-import { register, sendConfirmationCodeMail, updateConfirmationCode, updateProfile, checkEmail, checkStudentId, updateRoles } from '@controllers/auth';
+import { register, sendConfirmationCodeMail, updateConfirmationCode, updateProfile, checkEmail, checkStudentId, changeRoles } from '@controllers/auth';
 
 const router = express.Router();
 // api/auth/
@@ -34,7 +34,10 @@ router.post('/checkEmail', checkEmail);
 router.post('/checkStudentId', checkStudentId)
 
 // 권한 수정
-// rotuer.post('/updateRoles', updateRoles)
+router.post('/changeRoles', passport.authenticate('jwt', {session: false}), changeRoles)
+
+// 패스워드 초기화(메일로 초기화 번호발송)
+router.post('/find/reset-password', () => {})
 
 // export default router;
 module.exports = router;
