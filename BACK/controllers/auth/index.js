@@ -1,4 +1,4 @@
-import { register as registerService } from '@services/auth';
+import { register as registerService, confirmationSave } from '@services/auth';
 import { sendConfirmationCode } from '@services/utils/Mailer';
 import User from '@db/model/users';
 import jwt from 'jsonwebtoken';
@@ -18,6 +18,12 @@ export function register(req, res) {
 		})
 		.catch((err) => {
 			winston.error(`Register Failed... ::: ${err.message}`);
+			res.json({
+				data: null,
+				status: 500,
+				error: '1006',
+				message: 'register failed',
+			});
 		});
 }
 
@@ -32,7 +38,6 @@ export function sendConfirmationCodeMail(req, res) {
 		subject: `${process.env.WEB_SITE_NAME} 회원가입 인증코드입니다.`,
 		html: `인증코드 : ${data.confirmation_code}`,
 	};
-
 	sendConfirmationCode(emailData)
 		.then((data) => {
 			res.json({
@@ -40,6 +45,7 @@ export function sendConfirmationCodeMail(req, res) {
 			});
 		})
 		.catch((err) => {
+			winston.error(`sendConfirmationCodeMail Failed... ::: ${err.message}`);
 			res.json({
 				data: null,
 				status: 500,
@@ -47,81 +53,99 @@ export function sendConfirmationCodeMail(req, res) {
 				message: 'Send Confirmation-code mail failed',
 			});
 		});
-	//
 }
 
-export function updateProfile(req,res) {
+export async function updateConfirmationCode(req, res) {
+	const { body } = req;
+	const bearerHeader = req.headers['authorization'];
+	const bearer = bearerHeader.split(' ');
+	const bearerToken = bearer[1];
+	const userData = jwt.verify(bearerToken, process.env.JWT_SECRET);
+	// User
+	try {
+		const response = await confirmationSave({
+			email: userData.email,
+			confirmation_code: body.confirmation_code,
+		});
+		res.json(response);
+	} catch (err) {
+		winston.error(`Update Confirmation-code Failed... ::: ${err.message}`);
+		res.json({
+			data: null,
+			status: 500,
+			error: '1003',
+			message: 'update Confirmation-code fail',
+		});
+	}
+}
+
+export function updateProfile(req, res) {
 	const { body, user } = req;
-		try {
-			let updatedData = User.updateProfile(user, body)
-			res.json ({
-				data: updatedData,
-				message: 'update complete',
-			})
-		}
-		catch(err) {
-			res.json ({
-				data: null,
-				status: 500,
-				error: '1003',
-				message: 'update fail',
-			});
-		}
-
+	try {
+		let updatedData = User.updateProfile(user, body);
+		res.json({
+			data: updatedData,
+			message: 'update complete',
+		});
+	} catch (err) {
+		res.json({
+			data: null,
+			status: 500,
+			error: '1003',
+			message: 'update fail',
+		});
+	}
 }
-export function checkEmail (req, res) {
+export function checkEmail(req, res) {
 	const { email } = req.body;
-	
+
 	User.checkEmail({ email })
 		.then((duplicate) => {
 			if (duplicate) {
-				res.json ({
+				res.json({
 					data: null,
-					message: "email is duplicated"
-				})
-			} 
-			else {
-				res.json ({
+					message: 'email is duplicated',
+				});
+			} else {
+				res.json({
 					data: null,
-					message: "not duplicated"
-				})
+					message: 'not duplicated',
+				});
 			}
 		})
-		.catch((err)=> {
-			res.json ({
+		.catch((err) => {
+			res.json({
 				data: null,
 				status: 500,
-				error : '1004',
-				message: 'email checking error'
-			})	
-	})
+				error: '1004',
+				message: 'email checking error',
+			});
+		});
 }
 
-
-export function checkStudentId (req, res) {
+export function checkStudentId(req, res) {
 	const { studentId } = req.body;
-	
+
 	User.checkStudentId({ studentId })
 		.then((duplicate) => {
 			if (duplicate) {
-				res.json ({
+				res.json({
 					data: null,
-					message: "studentId is duplicated"
-				})
-			}
-			else {
-				res.json ({
+					message: 'studentId is duplicated',
+				});
+			} else {
+				res.json({
 					data: null,
-					message: "not duplicated"
-				})
+					message: 'not duplicated',
+				});
 			}
 		})
-		.catch((err)=> {
-			res.json ({
+		.catch((err) => {
+			res.json({
 				data: null,
 				status: 500,
-				error : '1005',
-				message: 'studentId checking error'
-			})	
-		})
+				error: '1005',
+				message: 'studentId checking error',
+			});
+		});
 }
