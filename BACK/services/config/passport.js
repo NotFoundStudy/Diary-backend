@@ -21,7 +21,6 @@ module.exports = () => {
 				passwordField: 'password',
 			},
 			async function (username, password, done) {
-				console.log(username,'>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
 				User.login({ email: username, password })
 					.then((user) => {
 						if (!user) {

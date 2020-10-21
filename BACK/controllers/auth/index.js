@@ -42,6 +42,7 @@ export function sendConfirmationCodeMail(req, res) {
 		.catch((err) => {
 			res.json({
 				data: null,
+				status: 500,
 				error: '1002',
 				message: 'Send Confirmation-code mail failed',
 			});
@@ -61,6 +62,7 @@ export function updateProfile(req,res) {
 		catch(err) {
 			res.json ({
 				data: null,
+				status: 500,
 				error: '1003',
 				message: 'update fail',
 			});
@@ -88,6 +90,7 @@ export function checkEmail (req, res) {
 		.catch((err)=> {
 			res.json ({
 				data: null,
+				status: 500,
 				error : '1004',
 				message: 'email checking error'
 			})	
@@ -116,6 +119,7 @@ export function checkStudentId (req, res) {
 		.catch((err)=> {
 			res.json ({
 				data: null,
+				status: 500,
 				error : '1005',
 				message: 'studentId checking error'
 			})	
