@@ -40,7 +40,7 @@ User.statics.findByEmail = function (email) {
 
 // 닉네임 찾기
 User.statics.findByStudentId = function (studentId) {
-	return this.findOne({ displayName });
+	return this.findOne({ studentId });
 };
 
 // 이메일과 닉네임 찾기
@@ -50,12 +50,12 @@ User.statics.findExistancy = function ({ email, studentId }) {
 	});
 };
 
-User.statics.login = async function({ email, password }) {
-	const userData = await this.findOne({ "$or": [{ email }, { studentId: email }] })
-	const isAuthenticated = userData.validatePassword(password)
-	if(isAuthenticated) return userData
-	return false
-}
+User.statics.login = async function ({ email, password }) {
+	const userData = await this.findOne({ $or: [{ email }, { studentId: email }] });
+	const isAuthenticated = userData.validatePassword(password);
+	if (isAuthenticated) return userData;
+	return false;
+};
 
 // local 회원가입
 User.statics.localRegister = function ({ email, password, studentId, name }) {
@@ -71,56 +71,55 @@ User.statics.localRegister = function ({ email, password, studentId, name }) {
 	return user;
 };
 
+//프로필 수정
+User.statics.updateProfile = function (user, body) {
+	const { name, password } = body;
+	if (name) user.name = name;
+	if (password) user.password = password;
+	user.save();
+	return user;
+};
+
+User.statics.checkEmail = async function ({ email }) {
+	let duplicate = null;
+	await this.findOne({ email })
+		.then((result) => {
+			if (result.length != 0) {
+				duplicate = true;
+			}
+		})
+		.catch((err) => {
+			duplicate = false;
+		});
+
+	return duplicate;
+};
+
+User.statics.checkStudentId = async function ({ studentId }) {
+	let duplicate = null;
+	await this.findOne({ studentId })
+		.then((result) => {
+			if (result.length != 0) {
+				duplicate = true;
+			}
+		})
+		.catch((err) => {
+			duplicate = false;
+		});
+
+	return duplicate;
+};
+
 // 해당 유저의 비밀번호 일치여부 체크
 User.methods.validatePassword = function (password) {
 	const hashed = hash(password);
 	return this.password === hashed;
 };
 
-//프로필 수정
-User.statics.updateProfile = function (user, body) {
-	const {name, password} = body;
-	if ( name != undefined && password != undefined ) {
-		user.name = name;
-		user.password = password;
-	}
-	else if ( name != undefined ) {
-		user.name = name;
-	}
-	else {
-		user.password = password;
-	}
-	user.save()
-	return user;
-
+// 유저값 변경
+User.methods.updateField = function (key, value) {
+	this[key] = value
+	return this.save()
 };
-
-User.statics.checkEmail = async function ({ email }) {
-	let duplicate= null;
-	await this.findOne({ email })
-		.then((result)=> {
-			if (result.length != 0) {
-				duplicate = true
-			}
-		}).catch((err)=>{
-			duplicate = false
-		})
-	
-	return duplicate;
-}
-
-User.statics.checkStudentId = async function ({ studentId }) {
-	let duplicate= null;
-	await this.findOne({ studentId })
-		.then((result)=> {
-			if (result.length != 0) {
-				duplicate = true
-			}
-		}).catch((err)=>{
-			duplicate = false
-		})
-	
-	return duplicate;
-}
 
 export default mongoose.model('User', User);
