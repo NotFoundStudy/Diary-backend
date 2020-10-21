@@ -119,7 +119,8 @@ User.methods.validatePassword = function (password) {
 // 유저값 변경
 User.methods.updateField = function (key, value) {
 	this[key] = value
-	return this.save()
+	this.save()
+	return this;
 };
 
 export default mongoose.model('User', User);
