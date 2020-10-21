@@ -1,4 +1,4 @@
-import { register as registerService, confirmationSave } from '@services/auth';
+import { register as registerService, confirmationSave, updateRoles } from '@services/auth';
 import { sendConfirmationCode } from '@services/utils/Mailer';
 import User from '@db/model/users';
 import jwt from 'jsonwebtoken';
@@ -148,4 +148,20 @@ export function checkStudentId(req, res) {
 				message: 'studentId checking error',
 			});
 		});
+}
+
+export async function changeRoles (req, res) {
+	const { email, roles } = req.body;
+	try {
+		let response = await updateRoles({ email, roles });
+		res.json({ message: response });
+	} catch(err) {
+		res.json({
+			data: null,
+			status: 500,
+			error: '1007',
+			message: 'roles update fail'
+		});
+		
+	}
 }
