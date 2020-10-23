@@ -3,28 +3,38 @@ import { sendConfirmationCode } from '@services/utils/Mailer';
 import User from '@db/model/users';
 import jwt from 'jsonwebtoken';
 import winston from '@config/winston';
+import { generateToken } from '@lib/token';
 require('dotenv').config();
 
-export function register(req, res) {
+export async function register(req, res) {
 	const { body } = req;
-	registerService({ data: body })
-		.then((response) => {
-			if (response.error) {
-				res.status = response.status;
-				res.send(response.message);
-				return;
-			}
-			res.send(response.data);
-		})
-		.catch((err) => {
-			winston.error(`Register Failed... ::: ${err.message}`);
-			res.json({
-				data: null,
-				status: 500,
-				error: '1006',
-				message: 'register failed',
-			});
+	try {
+		const response = await registerService({ data: body });
+		if (response.error) {
+			res.status = response.status;
+			res.send(response.message);
+			return;
+		}
+		// jwt.sign('token내용', 'JWT secretkey')
+		const { email, name, confirmation, roles, studentId } = response.data;
+		const token = jwt.sign(
+			JSON.stringify({ email, name, confirmation, roles, studentId }),
+			process.env.JWT_SECRET
+		);
+		res.send({
+			data: { email, name, confirmation, roles, studentId },
+			token,
+			message: 'register success',
 		});
+	} catch (err) {
+		winston.error(`Register Failed... ::: ${err.message}`);
+		res.json({
+			data: null,
+			status: 500,
+			error: '1006',
+			message: 'register failed',
+		});
+	}
 }
 
 export function sendConfirmationCodeMail(req, res) {
@@ -150,18 +160,17 @@ export function checkStudentId(req, res) {
 		});
 }
 
-export async function changeRoles (req, res) {
+export async function changeRoles(req, res) {
 	const { email, roles } = req.body;
 	try {
 		let response = await updateRoles({ email, roles });
 		res.json({ message: response });
-	} catch(err) {
+	} catch (err) {
 		res.json({
 			data: null,
 			status: 500,
 			error: '1007',
-			message: 'roles update fail'
+			message: 'roles update fail',
 		});
-		
 	}
 }

@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { JWT_SECRET: secret } = process.env;
+const { JWT_SECRET: secret, WEB_SITE_NAME } = process.env;
 
 /* 
   특정정보(payload)를 담은 token을 생성해줍니다. 
@@ -11,7 +11,7 @@ function generateToken(payload, subject) {
 			payload,
 			secret,
 			{
-				issuer: 'wherecar.com',
+				issuer: `${WEB_SITE_NAME}.com`,
 				expiresIn: '7d',
 				subject,
 			},
