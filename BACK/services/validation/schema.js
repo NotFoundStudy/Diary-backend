@@ -6,7 +6,7 @@ const { EMAIL_DOMAIN } = process.env;
 export const userSchema = Joi.object({
 	email: Joi.string()
 		.email({ minDomainSegments: 2, tlds: { allow: ['kr'] } })
-		.pattern(new RegExp(EMAIL_DOMAIN+'+\.ac+\.kr$'))
+		.pattern(new RegExp(EMAIL_DOMAIN + '+.ac+.kr$'))
 		.required(),
 	studentId: Joi.string().alphanum().min(3).max(30).required(),
 	name: Joi.string().required(),
@@ -18,8 +18,14 @@ export const userSchema = Joi.object({
 // .with('password', 'repeat_password');
 
 export const boardSchema = Joi.object({
-	type: Joi.string().alphanum().min(3).max(10).required(),
-	title: Joi.string().alphanum().min(0).max(30).required(),
+	type: Joi.string().alphanum().min(3).max(10),
+	title: Joi.string().alphanum().min(0).max(30),
 	contents: Joi.string(),
-	email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
-});
+	email: Joi.string()
+		.email({ minDomainSegments: 2, tlds: { allow: ['kr'] } })
+		.pattern(new RegExp(EMAIL_DOMAIN + '+.ac+.kr$'))
+		.required(),
+	tag: Joi.array().items(Joi.string()),
+	isSecret: Joi.boolean(),
+	password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
+}).with('isSecret', 'password');
