@@ -1,4 +1,5 @@
 import {Auth} from './APIInstance';
+const nonAuthAPI = Auth.create()
 
 // userId, password
 export const login = ({ token, body }) => {
@@ -8,7 +9,6 @@ export const login = ({ token, body }) => {
 
 // email, password, studentId, name
 export const regiter = ({ body }) => {
-	const nonAuthAPI = Auth.create()
 	return nonAuthAPI.post('/register', body);
 }
 
@@ -38,13 +38,11 @@ export const Confirmed = ({ token, body }) => {
 
 // email
 export const checkEmail = ({ body }) => {
-	const nonAuthAPI = Auth.create()
-	authAPI.post('/checkEmail', body);
+	return nonAuthAPI.post('/checkEmail', body);
 }
 
 // studentId
 export const checkStudentId = ({ body }) => {
-	const nonAuthAPI = Auth.create()
 	return nonAuthAPI.post('/checkStudentId', body);
 }
 
@@ -56,6 +54,5 @@ export const changeRoles = ({ token, body }) => {
 
 // 미완성
 export const resetPassword = ({ body }) => {
-	const nonAuthAPI = Auth.create()
 	return nonAuthAPI.post('/find/reset-password', body);
 }
