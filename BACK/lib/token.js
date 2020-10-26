@@ -33,5 +33,17 @@ function decodeToken(token) {
 	});
 }
 
+function decodeBearerToken(authorization) {
+	const bearer = authorization.split(' ');
+	const bearerToken = bearer[1];
+	return new Promise((resolve, reject) => {
+		jwt.verify(bearerToken, secret, (error, decoded) => {
+			if (error) reject(error);
+			resolve(decoded);
+		});
+	});
+}
+
 exports.generateToken = generateToken;
 exports.decodeToken = decodeToken;
+exports.decodeBearerToken = decodeBearerToken;

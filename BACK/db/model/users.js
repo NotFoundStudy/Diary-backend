@@ -10,10 +10,10 @@ const { Schema } = mongoose;
 
 let User = new Schema(
 	{
-		email: { type: String, unique: true },
-		studentId: { type: String },
-		name: { type: String },
-		password: { type: String },
+		email: { type: String, unique: true, trim: true },
+		studentId: { type: String, trim: true, required: true },
+		name: { type: String, trim: true, required: true },
+		password: { type: String, trim: true, required: true },
 		roles: [String],
 		confirmation_code: String,
 		confirmed: { type: Boolean, default: false },
@@ -118,8 +118,8 @@ User.methods.validatePassword = function (password) {
 
 // 유저값 변경
 User.methods.updateField = function (key, value) {
-	this[key] = value
-	this.save()
+	this[key] = value;
+	this.save();
 	return this;
 };
 

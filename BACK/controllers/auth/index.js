@@ -37,32 +37,29 @@ export async function register(req, res) {
 	}
 }
 
-export function sendConfirmationCodeMail(req, res) {
-	const bearerHeader = req.headers['authorization'];
-	const bearer = bearerHeader.split(' ');
-	const bearerToken = bearer[1];
-	const data = jwt.verify(bearerToken, process.env.JWT_SECRET);
+export async function sendConfirmationCodeMail(req, res) {
+	try {
+		const bearerHeader = req.headers['authorization'];
+		const bearer = bearerHeader.split(' ');
+		const bearerToken = bearer[1];
+		const data = jwt.verify(bearerToken, process.env.JWT_SECRET);
 
-	const emailData = {
-		toEmail: data.email,
-		subject: `${process.env.WEB_SITE_NAME} 회원가입 인증코드입니다.`,
-		html: `인증코드 : ${data.confirmation_code}`,
-	};
-	sendConfirmationCode(emailData)
-		.then((data) => {
-			res.json({
-				message: 'Mail send success!',
-			});
-		})
-		.catch((err) => {
-			winston.error(`sendConfirmationCodeMail Failed... ::: ${err.message}`);
-			res.json({
-				data: null,
-				status: 500,
-				error: '1002',
-				message: 'Send Confirmation-code mail failed',
-			});
+		const emailData = {
+			toEmail: data.email,
+			subject: `${process.env.WEB_SITE_NAME} 회원가입 인증코드입니다.`,
+			html: `인증코드 : ${data.confirmation_code}`,
+		};
+		const result = await sendConfirmationCode(emailData);
+		result && res.json({ message: 'Mail send success!' });
+	} catch (err) {
+		winston.error(`sendConfirmationCodeMail Failed... ::: ${err.message}`);
+		res.json({
+			data: null,
+			status: 500,
+			error: '1002',
+			message: 'Send Confirmation-code mail failed',
 		});
+	}
 }
 
 export async function updateConfirmationCode(req, res) {

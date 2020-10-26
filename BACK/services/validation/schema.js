@@ -5,7 +5,6 @@ const { EMAIL_DOMAIN } = process.env;
 
 export const userSchema = Joi.object({
 	email: Joi.string()
-		.email({ minDomainSegments: 2, tlds: { allow: ['kr'] } })
 		.pattern(new RegExp(EMAIL_DOMAIN + '+.ac+.kr$'))
 		.required(),
 	studentId: Joi.string().alphanum().min(3).max(30).required(),
@@ -19,13 +18,21 @@ export const userSchema = Joi.object({
 
 export const boardSchema = Joi.object({
 	type: Joi.string().alphanum().min(3).max(10),
-	title: Joi.string().alphanum().min(0).max(30),
+	title: Joi.string().min(0).max(30),
 	contents: Joi.string(),
 	email: Joi.string()
-		.email({ minDomainSegments: 2, tlds: { allow: ['kr'] } })
 		.pattern(new RegExp(EMAIL_DOMAIN + '+.ac+.kr$'))
 		.required(),
-	tag: Joi.array().items(Joi.string()),
+	tags: Joi.array().items(Joi.string()),
 	isSecret: Joi.boolean(),
 	password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
 }).with('isSecret', 'password');
+
+export const boardCommentsSchema = Joi.object({
+	boardType: Joi.string().alphanum().min(3).max(10),
+	email: Joi.string()
+		.pattern(new RegExp(EMAIL_DOMAIN + '+.ac+.kr$'))
+		.required(),
+	comments: Joi.string(),
+	id: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
+});

@@ -12,7 +12,7 @@ export async function register({ data }) {
 	// validation check
 	try {
 		const value = await userValidation.validateAsync(data);
-		const { email, studentId, password, name } = data;
+		const { email, studentId, password, name } = value;
 		const exists = await User.findExistancy({ email, studentId });
 
 		if (exists) {
@@ -22,12 +22,7 @@ export async function register({ data }) {
 			response.message = `Already exists [${key}]`;
 			return response;
 		}
-		const user = await User.localRegister({
-			email,
-			password,
-			studentId,
-			name,
-		});
+		const user = await User.localRegister(value);
 		response.data = user;
 	} catch (err) {
 		response.error = '0002';
