@@ -18,14 +18,14 @@ export const updateUser = ({ token, body }) => {
 	return authAPI.put('/user', body);
 }
 
-// email
+// email 미완성
 export const deleteUser = ({ token, body }) => {
 	const authAPI = Auth.create(token)
 	return authAPI.delete('/user');
 }
 
 // 
-export const requestConfirmationCode = ({ token}) => {
+export const requestConfirmationCode = ({ token }) => {
 	const authAPI = Auth.create(token)
 	return authAPI.get('/confirmation-code');
 }
