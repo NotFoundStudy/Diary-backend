@@ -8,6 +8,8 @@ require('dotenv').config();
 
 export async function register(req, res) {
 	const { body } = req;
+	console.log(">>>>>>>>>")
+	console.log(body)
 	try {
 		const response = await registerService({ data: body });
 		if (response.error) {
