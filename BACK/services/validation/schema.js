@@ -16,6 +16,12 @@ export const userSchema = Joi.object({
 }).xor('password', 'access_token');
 // .with('password', 'repeat_password');
 
+export const emailSchema = Joi.object({
+	email: Joi.string()
+		.pattern(new RegExp(EMAIL_DOMAIN + '+.ac+.kr$'))
+		.required(),
+})
+
 export const boardSchema = Joi.object({
 	type: Joi.string().alphanum().min(3).max(10),
 	title: Joi.string().min(0).max(30),

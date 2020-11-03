@@ -2,7 +2,7 @@ import express from 'express';
 import passport from 'passport';
 import AuthTokenController from '@services/utils/AuthTokenController';
 import winston from '@config/winston';
-import { register, sendConfirmationCodeMail, updateConfirmationCode, updateProfile, checkEmail, checkStudentId, changeRoles } from '@controllers/auth';
+import { register, sendConfirmationCodeMail, updateConfirmationCode, updateProfile, checkEmail, checkStudentId, changeRoles, confirmed, sendConfirmationMail } from '@controllers/auth';
 
 const router = express.Router();
 // api/auth/
@@ -22,10 +22,12 @@ router.put('/user', passport.authenticate('jwt', {session: false}), updateProfil
 router.delete('/user', () => {});
 
 // 이메일 인증코드 생성
-router.get('/confirmation-code', passport.authenticate('jwt', {session: false}), sendConfirmationCodeMail);
+// router.get('/confirmation-code', passport.authenticate('jwt', {session: false}), sendConfirmationCodeMail);
+router.post('/confirmation', sendConfirmationMail);
 
 // 이메일 인증
-router.put('/confirmation-code', passport.authenticate('jwt', {session: false}), updateConfirmationCode);
+// router.put('/confirmation-code', passport.authenticate('jwt', {session: false}), updateConfirmationCode);
+router.get('/confirmation/:code', confirmed);
 
 // 가입시 메일 중복체크
 router.post('/checkEmail', checkEmail);

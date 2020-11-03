@@ -1,6 +1,9 @@
 import { register as registerService, confirmationSave, updateRoles } from '@services/auth';
 import { sendConfirmationCode } from '@services/utils/Mailer';
+import { emailSchema as emailValidation } from '@services/validation/schema';
 import User from '@db/model/users';
+import ConfirmedCode from '@db/model/confirmedCodes';
+
 import jwt from 'jsonwebtoken';
 import winston from '@config/winston';
 import { generateToken } from '@lib/token';
@@ -8,8 +11,6 @@ require('dotenv').config();
 
 export async function register(req, res) {
 	const { body } = req;
-	console.log(">>>>>>>>>")
-	console.log(body)
 	try {
 		const response = await registerService({ data: body });
 		if (response.error) {
@@ -53,6 +54,66 @@ export async function sendConfirmationCodeMail(req, res) {
 		};
 		const result = await sendConfirmationCode(emailData);
 		result && res.json({ message: 'Mail send success!' });
+	} catch (err) {
+		winston.error(`sendConfirmationCodeMail Failed... ::: ${err.message}`);
+		res.json({
+			data: null,
+			status: 500,
+			error: '1002',
+			message: 'Send Confirmation-code mail failed',
+		});
+	}
+}
+
+// updating
+export async function sendConfirmationMail(req, res) {
+	try {
+		const { email } = req.body;
+		const validationed = await emailValidation.validateAsync({email});
+		
+		const { DOMAIN, JWT_SECRET } = process.env;
+		const token = jwt.sign({ email: validationed.email }, JWT_SECRET);
+
+		let confirmedCode = await ConfirmedCode.create({ email });
+
+		let linkTo = `${DOMAIN}/api/auth/confirmation/${confirmedCode.confirmation_code}`;
+
+		const emailData = {
+			toEmail: email,
+			subject: `${process.env.WEB_SITE_NAME} 회원가입 인증코드입니다.`,
+			html: `인증코드 : <a href="${linkTo}">링크를 클릭하면 회원가입 창으로 이동합니다.</a> <br/> <p>(해당 링크는 2분후에 만료됩니다.)</p>`,
+		};
+		const result = await sendConfirmationCode(emailData);
+		result && res.json({ message: 'Mail send success!' });
+	} catch (err) {
+		winston.error(`sendConfirmationCodeMail Failed... ::: ${err.message}`);
+		res.json({
+			data: null,
+			status: 500,
+			error: '1002',
+			message: 'Send Confirmation mail failed',
+		});
+	}
+}
+export async function confirmed(req, res) {
+	try {
+		const { code } = req.params;
+		const { DOMAIN, JWT_SECRET } = process.env;
+		const confirmedCode = await ConfirmedCode.getConfirmedCodeByCode({ confirmation_code: code });
+		
+		if (confirmedCode) {
+			res.json({
+				message: 'confirmed mail success!',
+				data: { email: confirmedCode.email },
+			});
+		} else {
+			res.json({
+				data: null,
+				status: 500,
+				error: '1002',
+				message: 'is not valid confirmation code',
+			});
+		}
 	} catch (err) {
 		winston.error(`sendConfirmationCodeMail Failed... ::: ${err.message}`);
 		res.json({
