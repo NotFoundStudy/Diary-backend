@@ -58,3 +58,44 @@ export async function createComments(req, res) {
 		});
 	}
 }
+
+export async function showBoards(req, res) {
+	try {
+		const type = req.query.type;
+		const boards = await Board.getBoards(type);
+		res.send({
+			data: { boards },
+			message: 'get boards success',
+		});
+	} catch (err) {
+		winston.error(`get Boards Failed... ::: ${err.message || err}`);
+		res.json({
+			data: null,
+			status: 500,
+			error: '????',
+			message: 'get Boards failed',
+		});
+	}
+}
+
+export async function showComments(req, res) {
+	try {
+		const _id = req.query._id;
+		const board = await Board.getBoardById({ _id });
+		const comments = (await board.getComments()).comments;
+		console.log(comments)
+		res.send({
+			data: { comments },
+			message: 'get coments success',
+		});
+	} catch (err) {
+		winston.error(`get comments Failed... ::: ${err.message || err}`);
+		res.json({
+			data: null,
+			status: 500,
+			error: '????',
+			message: 'get comments failed',
+		});
+		
+	}
+}
