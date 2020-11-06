@@ -39,7 +39,7 @@ export async function createComments({ data }) {
 		const value = await commentsValidation.validateAsync(data);
 		const comment = await BoardComment.createComments(value);
 		
-		const id = value.id;
+		const id = value._id;
 		const newBoard = await Board.getBoardById(id);
 		
 		const updatedBoard = await newBoard.addComment(comment);

@@ -65,6 +65,7 @@ User.statics.localRegister = function ({ email, password, studentId, name }) {
 		studentId,
 		name,
 		confirmation_code: Math.random().toString(36).substr(2, 11),
+		confirmed: true,
 	});
 
 	user.save();

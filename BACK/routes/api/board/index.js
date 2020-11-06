@@ -1,6 +1,6 @@
 import express from 'express';
 import passport from 'passport';
-import { createBoard, updateComments, createComments, deleteComments } from '@controllers/board';
+import { createBoard, updateComments, createComments, deleteComments, showBoards, showComments} from '@controllers/board';
 import winston from '@config/winston';
 
 const router = express.Router();
@@ -14,14 +14,17 @@ const router = express.Router();
 
 router.get('/',() => {});
 
-router.post('/createBoard', passport.authenticate('jwt', {session: false}), createBoard);
+router.post('/create-board', passport.authenticate('jwt', {session: false}), createBoard);
 
 router.put('/', passport.authenticate('jwt', {session: false}), () => {});
 
+router.get('/show-boards', passport.authenticate('jwt', {session: false}), showBoards);
+
+router.get('/show-comments', passport.authenticate('jwt', {session: false}), showComments);
 // searching
 
 // comment 남기기
-router.post('/createComments', passport.authenticate('jwt', {session: false}), createComments);
+router.post('/create-comments', passport.authenticate('jwt', {session: false}), createComments);
 
 // comment 수정하기
 // router.post('/upodateComments', passport.authenticate('jwt', {session: false}), updateComments);

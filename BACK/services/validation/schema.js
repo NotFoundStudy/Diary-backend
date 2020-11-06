@@ -40,5 +40,5 @@ export const boardCommentsSchema = Joi.object({
 		.pattern(new RegExp(EMAIL_DOMAIN + '+.ac+.kr$'))
 		.required(),
 	comments: Joi.string(),
-	id: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
+	_id: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
 });
