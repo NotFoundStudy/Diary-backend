@@ -86,7 +86,7 @@ Board.statics.getBoardsByEmail = function (email, option) {
 };
 
 // get boards
-Board.statics.getBoards = function (sorts = { createdAt: -1 }, startPage = 1, limit = 15, type) {
+Board.statics.getBoards = function (type, sorts = { createdAt: -1 }, startPage = 1, limit = 15) {
 	const skip = (startPage - 1) * limit;
 	return this.find({ type }).sort(sorts).skip(skip).limit(limit).exec();
 };
